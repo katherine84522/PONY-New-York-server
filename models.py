@@ -14,7 +14,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    # this is basic bitch python classes
+    # this is basic python classes
     # Here is where we whitelist what can be set on create by a user client
     def __init__(self, username, email, password):
         self.username = username
