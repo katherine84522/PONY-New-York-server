@@ -28,17 +28,34 @@ def create_protector():
     db.session.commit()
     return jsonify(protector.to_dict()), 201
 
-# @app.route('/protectors')
-# def create_protector():
-#     if request.method == "POST":
-#         create_protector = create_protector(
-#             first_name = request.form['first_name'],
-#             last_name = request.form['last_name'],
-#             email = request.form['email']
-#         )
-#         db.session.add(create_protector)
-#         db.session.commit()
-#         return jsonify(create_protector.to_dict()), 201
+@app.post('/walkee')
+def create_walkee():
+    data = request.form
+    walkee = Walkee(data['first_name'], data['last_name'], data['email'])
+    print(data)
+    db.session.add(walkee)
+    db.session.commit()
+    return jsonify(walkee.to_dict()), 201
+
+
+@app.get('/walkee/<int:id>')
+def show_walkee(id):
+    walkee = Walkee.query.get(id)
+    if walkee:
+        return jsonify(walkee.to_dict())
+    else:
+        return {}, 404
+
+
+@app.get('/protector/<int:id>')
+def show_protector(id):
+    protector = Protector.query.get(id)
+    if protector:
+        return jsonify(protector.to_dict())
+    else:
+        return {}, 404
+
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))
