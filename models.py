@@ -42,6 +42,12 @@ class Protector(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
+            # 'password': self.password,
+            # 'picture': self.picture,
+            # 'phone_number': self.phone_number,
+            # 'gender_identity': self.gender_identity,
+            # 'address': self.address,
+            # 'active': self.active
         }  
 
     def __repr__(self):
@@ -75,7 +81,11 @@ class Walkee(db.Model):
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email,
+            # 'email': self.email,
+            # 'password': self.password,
+            # 'picture': self.picture,
+            # 'phone_number': self.phone_number,
+            # 'gender_identity': self.gender_identity
         }
 
     def __repr__(self):
@@ -92,8 +102,8 @@ class Requests(db.Model):
     message = db.Column(db.String(1000))
     start_location = db.Column(db.String(1000), nullable=False)
     end_location = db.Column(db.String(1000), nullable=False)
-    completed = db.Column(db.Boolean, default=False)
-    current = db.Column(db.Boolean, default=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
+    current = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
