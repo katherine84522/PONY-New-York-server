@@ -49,6 +49,8 @@ class Walkee(db.Model):
     picture = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, unique=True, nullable=False)
     gender_identity = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     def __init__(self, first_name, last_name, email, password, picture, phone_number, gender_identity):
         self.first_name = first_name
@@ -60,8 +62,8 @@ class Walkee(db.Model):
         self.gender_identity = gender_identity
 
 
-class Current_Requests(db.Model):
-    __tablename__ = 'current_requests'
+class Requests(db.Model):
+    __tablename__ = 'requests'
     id = db.Column(db.Integer, primary_key=True)
     walkee_id = db.Column(db.Integer)
     protector_id = db.Column(db.Integer)
@@ -69,40 +71,18 @@ class Current_Requests(db.Model):
     message = db.Column(db.String(1000))
     start_location = db.Column(db.String(1000), nullable=False)
     end_location = db.Column(db.String(1000), nullable=False)
-    completed = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    current = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    def __init__(self, start_location, end_location, message):
+    def __init__(self, start_location, end_location, message, completed, current):
         self.start_location = start_location
         self.end_location = end_location
         self.message = message
+        self.completed = completed
+        self.current = current
 
-
-class Future_Requests(db.Model):
-    __tablename__ = 'future_requests'
-    id = db.Column(db.Integer, primary_key=True)
-    walkee_id = db.Column(db.Integer)
-    protector_id = db.Column(db.Integer)
-    message = db.Column(db.String(1000))
-    start_location = db.Column(db.String(1000), nullable=False)
-    end_location = db.Column(db.String(1000), nullable=False)
-    date = db.Column(db.String(150), nullable=False)
-    time = db.Column(db.String(150), nullable=False)
-    completed = db.Column(db.Boolean, default=False, nullable=False)
-
-    def __init__(self, start_location, end_location, message, date, time):
-        self.start_location = start_location
-        self.end_location = end_location
-        self.message = message
-        self.date = date
-        self.time = time
-
-class Zone(db.Model):
-    __tablename__ = 'zone'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150))
-
-    def __init__(self, name):
-        self.name = name
          
 
 
