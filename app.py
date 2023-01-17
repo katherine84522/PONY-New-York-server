@@ -106,6 +106,15 @@ def update_requests(id):
     db.session.commit()
     return jsonify(request.to_dict()), 201
 
+@app.post('/create_requests')
+def create_requests():
+    data = request.form
+    request = Requests(data['start_location'], data['end_location'], data['datetime'], data['message'], data['completed'], data['current'])
+    print(data)
+    db.session.add(request)
+    db.session.commit()
+    return jsonify(request.to_dict()), 201
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))
