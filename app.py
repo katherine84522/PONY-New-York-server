@@ -78,5 +78,34 @@ def update_walkee(id):
 
 
 
+@app.get('/all_requests')
+def all_requests():
+    requests = Requests
+    if requests:
+        return jsonify(requests.to_dict()), 201
+    else:
+        return {}, 404
+
+
+@app.get('/requests/<int:id>')
+def get_requests(id):
+    request = Requests.query.get(id)
+    if request:
+        return jsonify(request.to_dict()), 201
+    else:
+        return {}, 404
+
+@app.patch('/requests/<int:id>')
+def update_requests(id):
+    data = request.form
+    request = Requests.query.get(id)
+    # request = data['completed']
+    request.completed = data['completed']
+    request.current = data['current']
+    db.session.add(request)
+    db.session.commit()
+    return jsonify(request.to_dict()), 201
+
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))
