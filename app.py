@@ -19,6 +19,14 @@ def home():
 def example():
     return {'message': 'Your app is running python'}
 
+@app.get('/protector/<int:id>')
+def show_protector(id):
+    protector = Protector.query.get(id)
+    if protector:
+        return jsonify(protector.to_dict())
+    else:
+        return {}, 404
+
 @app.post('/protector')
 def create_protector():
     data = request.form
@@ -27,6 +35,24 @@ def create_protector():
     db.session.add(protector)
     db.session.commit()
     return jsonify(protector.to_dict()), 201
+    
+@app.patch('/protector/<int:id>')
+def update_protector(id):
+    data = request.form
+    protector = Protector.query.get(id)
+    protector.first_name = data['first_name']
+    protector.last_name = data['last_name']
+    protector.email = data['email']
+    db.session.commit()
+    return jsonify(protector.to_dict()), 201
+
+@app.get('/walkee/<int:id>')
+def show_walkee(id):
+    walkee = Walkee.query.get(id)
+    if walkee:
+        return jsonify(walkee.to_dict())
+    else:
+        return {}, 404
 
 @app.post('/walkee')
 def create_walkee():
@@ -38,22 +64,17 @@ def create_walkee():
     return jsonify(walkee.to_dict()), 201
 
 
-@app.get('/walkee/<int:id>')
-def show_walkee(id):
+@app.patch('/walkee/<int:id>')
+def update_walkee(id):
+    data = request.form
     walkee = Walkee.query.get(id)
-    if walkee:
-        return jsonify(walkee.to_dict())
-    else:
-        return {}, 404
+    walkee.first_name = data['first_name']
+    walkee.last_name = data['last_name']
+    walkee.email = data['email']
+    db.session.commit()
+    return jsonify(walkee.to_dict()), 201
 
 
-@app.get('/protector/<int:id>')
-def show_protector(id):
-    protector = Protector.query.get(id)
-    if protector:
-        return jsonify(protector.to_dict())
-    else:
-        return {}, 404
 
 
 
