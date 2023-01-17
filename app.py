@@ -29,7 +29,7 @@ def show_protector(id):
 
 @app.post('/protectors')
 def create_protector():
-    data = request.form
+    data = request.json
     protector = Protector(data['first_name'], data['last_name'], data['email'])
     print (data)
     db.session.add(protector)
@@ -38,7 +38,7 @@ def create_protector():
 
 @app.patch('/protectors/<int:id>')
 def update_protector(id):
-    data = request.form
+    data = request.json
     protector = Protector.query.get(id)
     protector.first_name = data['first_name']
     protector.last_name = data['last_name']
@@ -56,7 +56,7 @@ def show_walkee(id):
 
 @app.post('/walkees')
 def create_walkee():
-    data = request.form
+    data = request.json
     walkee = Walkee(data['first_name'], data['last_name'], data['email'])
     print(data)
     db.session.add(walkee)
@@ -66,7 +66,7 @@ def create_walkee():
 
 @app.patch('/walkees/<int:id>')
 def update_walkee(id):
-    data = request.form
+    data = request.json
     walkee = Walkee.query.get(id)
     walkee.first_name = data['first_name']
     walkee.last_name = data['last_name']
@@ -93,18 +93,18 @@ def get_requests(id):
 
 @app.patch('/requests/<int:id>')
 def update_requests(id):
-    data = request.form
+    data = request.json
     request = Requests.query.get(id)
     # request = data['completed']
-    request.completed = data['completed']
-    request.current = data['current']
+    request.completed = data['completed'] #see if boolean is a 1 or a 0
+    request.current = data['current']  # see if boolean is a 1 or a 0
     db.session.add(request)
     db.session.commit()
     return jsonify(request.to_dict()), 201
 
 @app.post('/create_requests')
 def create_requests():
-    data = request.form
+    data = request.json
     request = Requests(data['start_location'], data['end_location'], data['datetime'], data['message'], data['completed'], data['current'])
     print(data)
     db.session.add(request)
