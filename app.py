@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from config import Config
 from models import db, Protector, Walkee, Requests
+import platform
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -14,6 +15,7 @@ from flask_socketio import SocketIO, emit
 app = Flask(__name__, static_folder='public')
 CORS(app, origins=['*'])
 app.config.from_object(Config)
+jwt = JWTManager(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins='*')
@@ -48,7 +50,7 @@ def pro_login():
         given_password = data['password']
         if protector.password == given_password:
             # authenticate the protector
-            # token = create_access_token(identity=protector.id)
+            token = create_access_token(identity=protector.id)
             return jsonify({'protector': protector.to_dict(), 'token': token})
         else:
             return jsonify({'error': 'invalid password'}), 422
@@ -119,7 +121,7 @@ def walkee_login():
         given_password = data['password']
         if walkee.password == given_password:
             # authenticate the walkee
-            # token = create_access_token(identity=walkee.id)
+            token = create_access_token(identity=walkee.id)
             return jsonify({'walkee': walkee.to_dict(), 'token': token})
         else:
             return jsonify({'error': 'invalid password'}), 422
