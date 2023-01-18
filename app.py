@@ -4,7 +4,12 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from config import Config
 from models import db, Protector, Walkee, Requests
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__, static_folder='public')
 CORS(app, origins=['*'])
@@ -70,6 +75,21 @@ def update_protector(id):
     return jsonify(protector.to_dict()), 201
 
 
+@app.delete('/protectors/<int:id>')
+# @jwt_required()
+def delete_protector(id):
+    protector = Protector.query.get(id)
+    if protector:
+        db.session.delete(protector)
+        db.session.commit()
+        # current_protector = get_jwt_identity()
+        print('Deleting protector successfully...')
+        return jsonify(protector.to_dict)
+    else:
+        return{'error': 'No protector found, soz'}, 404
+        
+
+
 @app.get('/walkees/<int:id>')
 def show_walkee(id):
     walkee = Walkee.query.get(id)
@@ -116,6 +136,20 @@ def update_walkee(id):
     return jsonify(walkee.to_dict()), 201
 
 
+@app.delete('/walkees/<int:id>')
+# @jwt_required()
+def delete_walkee(id):
+    walkee = Walkee.query.get(id)
+    if walkee:
+        db.session.delete(walkee)
+        db.session.commit()
+        # current_walkee = get_jwt_identity()
+        print('Deleting walkee successfully...')
+        return jsonify(walkee.to_dict)
+    else:
+        return {'error': 'No walkee found'}, 404
+
+
 @app.get('/requests')
 def all_requests():
     requests = Requests.query.all()
@@ -157,6 +191,17 @@ def create_requests():
     return jsonify(reqs.to_dict()), 201
 
 
+@app.delete('/requests/<int:id>')
+def delete_request(id):
+    req = Requests.query.get(id)
+    if req:
+        db.session.delete(req)
+        db.session.commit()
+        print('Deleting req successfully...')
+        return jsonify(req.to_dict)
+    else:
+        return {'error': 'No request found'}, 404
+
 @socketio.on('connect')
 def connected():
     '''This function is an event listener that gets called when the client connects to the server'''
@@ -177,6 +222,7 @@ def disconnected():
     print(f'Client {request.sid} has disconnected')
     emit('disconnect',
          f'Client {request.sid} has disconnected', broadcast=True)
+
 
 
 if __name__ == '__main__':
