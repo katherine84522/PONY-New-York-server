@@ -19,6 +19,7 @@ class Protector(db.Model):
     # address = db.Column(db.String)  # nullable=False
     # background_check = db.Column(db.Boolean )
     # active = db.Column(db.Boolean, default=False)
+    # requests = db.relationship('Requests', backref='protector', lazy=True)
     # created_at = db.Column(db.DateTime, server_default=db.func.now())
     # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -65,6 +66,7 @@ class Walkee(db.Model):
     # picture = db.Column(db.String)  # nullable=False
     # phone_number = db.Column(db.String, unique=True)  # nullable=False
     # gender_identity = db.Column(db.String)
+    # requests = db.relationship('Requests', backref='walkee', lazy=True)
     # created_at = db.Column(db.DateTime, server_default=db.func.now())
     # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -97,8 +99,8 @@ class Walkee(db.Model):
 class Requests(db.Model):
     __tablename__ = 'requests'
     id = db.Column(db.Integer, primary_key=True)
-    walkee_id = db.Column(db.Integer)
-    protector_id = db.Column(db.Integer)
+    walkee_id = db.Column(db.Integer, db.ForeignKey('walkee.id'), nullable=False)
+    protector_id = db.Column(db.Integer, db.ForeignKey('protector.id'))
     date = db.Column(db.String(1000))
     time = db.Column(db.String(1000))
     message = db.Column(db.String(1000))

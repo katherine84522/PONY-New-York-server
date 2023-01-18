@@ -176,7 +176,6 @@ def update_requests(id):
     req = Requests.query.get(id)
     # request = data['completed']
     req.completed = data['completed']  # see if boolean is a 1 or a 0
-    req.current = data['current']  # see if boolean is a 1 or a 0
     db.session.add(req)
     db.session.commit()
     return jsonify(req.to_dict()), 201
