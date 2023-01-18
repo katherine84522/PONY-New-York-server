@@ -4,20 +4,21 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate(db)
 
+
 class Protector(db.Model):
     # this is the migration part
     __tablename__ = 'protectors'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80) ) #nullable=False
-    last_name = db.Column(db.String(80) ) #nullable=False
+    first_name = db.Column(db.String(80))  # nullable=False
+    last_name = db.Column(db.String(80))  # nullable=False
     email = db.Column(db.String(120), unique=True)  # nullable=False
     # password = db.Column(db.String(120))  # nullable=False
     # picture = db.Column(db.String, unique=True)  # nullable=False
     # phone_number = db.Column(db.String, unique=True)  # nullable=False
-    # gender_identity = db.Column(db.String) 
+    # gender_identity = db.Column(db.String)
     # address = db.Column(db.String)  # nullable=False
     # background_check = db.Column(db.Boolean )
-    # active = db.Column(db.Boolean, default=False) 
+    # active = db.Column(db.Boolean, default=False)
     # created_at = db.Column(db.DateTime, server_default=db.func.now())
     # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -33,11 +34,11 @@ class Protector(db.Model):
         # self.phone_number = phone_number
         # self.gender_identity = gender_identity
         # self.address = address
-        # self.active = active    
-        # 
+        # self.active = active
+        #
 
-    def to_dict(self): #this is how we serialize (similar to_json)
-        return{
+    def to_dict(self):  # this is how we serialize (similar to_json)
+        return {
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
@@ -48,15 +49,16 @@ class Protector(db.Model):
             # 'gender_identity': self.gender_identity,
             # 'address': self.address,
             # 'active': self.active
-        }  
+        }
 
     def __repr__(self):
         return '<Protector %r>' % self.first_name
 
+
 class Walkee(db.Model):
     __tablename__ = 'walkees'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80)) #nullable=False
+    first_name = db.Column(db.String(80))  # nullable=False
     last_name = db.Column(db.String(80))  # nullable=False
     email = db.Column(db.String(120), unique=True)  # nullable=False
     # password = db.Column(db.String(120))  # nullable=False
@@ -105,7 +107,8 @@ class Requests(db.Model):
     completed = db.Column(db.Boolean, nullable=False)
     current = db.Column(db.Boolean, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    updated_at = db.Column(
+        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     def __init__(self, start_location, end_location, date, time, message, completed, current):
         self.start_location = start_location
@@ -114,7 +117,7 @@ class Requests(db.Model):
         self.time = time
         self.message = message
         self.completed = False
-        self.current = False
+        self.current = current
 
     def to_dict(self):  # this is how we serialize (similar to_json)
         return {
@@ -130,8 +133,3 @@ class Requests(db.Model):
 
     def __repr__(self):
         return 'Requests %r' % self.start_location
-
-         
-
-
-
