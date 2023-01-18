@@ -12,7 +12,9 @@ def run_seeds():
     request1 = Requests('statue lib', 'my house', '1/14', '2pm', 'message1', 'False', 'False', 'False', 1, 2)
     request2 = Requests('penn st', 'nyse', '2/11', '5pm',
                         'message2', 'False', 'False', 'True', 2, 2)
-    db.session.add_all([protector1, protector2, walkee1, walkee2, request1, request2])
+    db.session.add_all([protector1, protector2])
+    db.session.add_all([walkee1, walkee2])
+    db.session.add_all([request1, request2])
     db.seesion.commit()
     print('Done! 🌳')
 

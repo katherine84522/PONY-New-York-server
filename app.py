@@ -196,7 +196,7 @@ def update_requests(id):
 def create_requests():
     data = request.json
     reqs = Requests(data['start_location'], data['end_location'], data['date'],
-                    data['time'], data['message'], data['completed'], data['current'])
+                    data['time'], data['message'], data['completed'], data['current'], data['active'])
     # print(data)
     db.session.add(reqs)
     db.session.commit()
