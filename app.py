@@ -11,13 +11,16 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
 @app.get('/')
 def home():
     return send_file('welcome.html')
 
+
 @app.get('/example')
 def example():
     return {'message': 'Your app is running python'}
+
 
 @app.get('/protectors/<int:id>')
 def show_protector(id):
@@ -26,6 +29,7 @@ def show_protector(id):
         return jsonify(protector.to_dict())
     else:
         return {}, 404
+
 
 @app.post('/protector_login')
 def pro_login():
@@ -42,14 +46,16 @@ def pro_login():
         else:
             return jsonify({'error': 'invalid password'}), 422
 
+
 @app.post('/protectors')
 def create_protector():
     data = request.json
     protector = Protector(data['first_name'], data['last_name'], data['email'])
-    print (data)
+    print(data)
     db.session.add(protector)
     db.session.commit()
     return jsonify(protector.to_dict()), 201
+
 
 @app.patch('/protectors/<int:id>')
 def update_protector(id):
@@ -61,6 +67,7 @@ def update_protector(id):
     db.session.commit()
     return jsonify(protector.to_dict()), 201
 
+
 @app.get('/walkees/<int:id>')
 def show_walkee(id):
     walkee = Walkee.query.get(id)
@@ -68,6 +75,7 @@ def show_walkee(id):
         return jsonify(walkee.to_dict())
     else:
         return {}, 404
+
 
 @app.post('/walkees')
 def create_walkee():
@@ -106,13 +114,14 @@ def update_walkee(id):
     return jsonify(walkee.to_dict()), 201
 
 
-@app.get('/all_requests')
+@app.get('/requests')
 def all_requests():
-    requests = Requests
+    requests = Requests.query.all()
     if requests:
-        return jsonify(requests.to_dict()), 201
+        return jsonify([r.to_dict() for r in requests]), 201
     else:
         return {}, 404
+
 
 @app.get('/requests/<int:id>')
 def get_requests(id):
@@ -122,25 +131,29 @@ def get_requests(id):
     else:
         return {}, 404
 
+
 @app.patch('/requests/<int:id>')
 def update_requests(id):
     data = request.json
     request = Requests.query.get(id)
     # request = data['completed']
-    request.completed = data['completed'] #see if boolean is a 1 or a 0
+    request.completed = data['completed']  # see if boolean is a 1 or a 0
     request.current = data['current']  # see if boolean is a 1 or a 0
     db.session.add(request)
     db.session.commit()
     return jsonify(request.to_dict()), 201
 
-@app.post('/create_requests')
+
+@app.post('/requests')
 def create_requests():
     data = request.json
-    reqs = Requests(data['start_location'], data['end_location'], data['date'], data['time'], data['message'], data['completed'], data['current'])
+    reqs = Requests(data['start_location'], data['end_location'], data['date'],
+                    data['time'], data['message'], data['completed'], data['current'])
     # print(data)
     db.session.add(reqs)
     db.session.commit()
     return jsonify(reqs.to_dict()), 201
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))
