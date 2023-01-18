@@ -135,13 +135,13 @@ def get_requests(id):
 @app.patch('/requests/<int:id>')
 def update_requests(id):
     data = request.json
-    request = Requests.query.get(id)
+    req = Requests.query.get(id)
     # request = data['completed']
-    request.completed = data['completed']  # see if boolean is a 1 or a 0
-    request.current = data['current']  # see if boolean is a 1 or a 0
-    db.session.add(request)
+    req.completed = data['completed']  # see if boolean is a 1 or a 0
+    req.current = data['current']  # see if boolean is a 1 or a 0
+    db.session.add(req)
     db.session.commit()
-    return jsonify(request.to_dict()), 201
+    return jsonify(req.to_dict()), 201
 
 
 @app.post('/requests')
