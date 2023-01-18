@@ -27,6 +27,21 @@ def show_protector(id):
     else:
         return {}, 404
 
+@app.post('/protector_login')
+def pro_login():
+    data = request.json
+    protector = Protector.query.filter_by(email=data['email']).first()
+    if not protector:
+        return jsonify({'error': 'no account found'}), 404
+    else:
+        given_password = data['password']
+        if protector.password == given_password:
+            # authenticate the protector
+            # token = create_access_token(identity=protector.id)
+            return jsonify({'protector': protector.to_dict(), 'token': token})
+        else:
+            return jsonify({'error': 'invalid password'}), 422
+
 @app.post('/protectors')
 def create_protector():
     data = request.json
@@ -62,6 +77,22 @@ def create_walkee():
     db.session.add(walkee)
     db.session.commit()
     return jsonify(walkee.to_dict()), 201
+
+
+@app.post('/walkee_login')
+def walkee_login():
+    data = request.json
+    walkee = Walkee.query.filter_by(email=data['email']).first()
+    if not walkee:
+        return jsonify({'error': 'no account found'}), 404
+    else:
+        given_password = data['password']
+        if walkee.password == given_password:
+            # authenticate the walkee
+            # token = create_access_token(identity=walkee.id)
+            return jsonify({'walkee': walkee.to_dict(), 'token': token})
+        else:
+            return jsonify({'error': 'invalid password'}), 422
 
 
 @app.patch('/walkees/<int:id>')
@@ -105,11 +136,11 @@ def update_requests(id):
 @app.post('/create_requests')
 def create_requests():
     data = request.json
-    request = Requests(data['start_location'], data['end_location'], data['datetime'], data['message'], data['completed'], data['current'])
-    print(data)
-    db.session.add(request)
+    reqs = Requests(data['start_location'], data['end_location'], data['date'], data['time'], data['message'], data['completed'], data['current'])
+    # print(data)
+    db.session.add(reqs)
     db.session.commit()
-    return jsonify(request.to_dict()), 201
+    return jsonify(reqs.to_dict()), 201
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))

@@ -102,25 +102,27 @@ class Requests(db.Model):
     message = db.Column(db.String(1000))
     start_location = db.Column(db.String(1000), nullable=False)
     end_location = db.Column(db.String(1000), nullable=False)
-    completed = db.Column(db.Boolean, default=False, nullable=False)
-    current = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False)
+    current = db.Column(db.Boolean, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    def __init__(self, start_location, end_location, datetime, message, completed, current):
+    def __init__(self, start_location, end_location, date, time, message):
         self.start_location = start_location
         self.end_location = end_location
-        self.datetime = datetime
+        self.date = date
+        self.time = time
         self.message = message
-        self.completed = completed
-        self.current = current
+        self.completed = False
+        self.current = False
 
     def to_dict(self):  # this is how we serialize (similar to_json)
         return {
             'id': self.id,
             'start_location': self.start_location,
             'end_location': self.end_location,
-            'datetime': self.datetime,
+            'date': self.date,
+            'time': self.time,
             'message': self.message,
             'completed': self.completed,
             'current': self.current
