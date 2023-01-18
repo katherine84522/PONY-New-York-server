@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 migrate = Migrate(db)
@@ -19,7 +20,7 @@ class Protector(db.Model):
     # address = db.Column(db.String)  # nullable=False
     # background_check = db.Column(db.Boolean )
     # active = db.Column(db.Boolean, default=False)
-    # requests = db.relationship('Requests', backref='protector', lazy=True)
+    requests = db.relationship('Requests', backref='protector', lazy=True)
     # created_at = db.Column(db.DateTime, server_default=db.func.now())
     # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -50,6 +51,8 @@ class Protector(db.Model):
             # 'gender_identity': self.gender_identity,
             # 'address': self.address,
             # 'active': self.active
+            'requests':[request.to_dict() for request in Requests.query.filter_by(protector_id=self.id)]
+
         }
 
     def __repr__(self):
@@ -66,7 +69,7 @@ class Walkee(db.Model):
     # picture = db.Column(db.String)  # nullable=False
     # phone_number = db.Column(db.String, unique=True)  # nullable=False
     # gender_identity = db.Column(db.String)
-    # requests = db.relationship('Requests', backref='walkee', lazy=True)
+    requests = db.relationship('Requests', backref='walkee', lazy=True)
     # created_at = db.Column(db.DateTime, server_default=db.func.now())
     # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -90,6 +93,7 @@ class Walkee(db.Model):
             # 'picture': self.picture,
             # 'phone_number': self.phone_number,
             # 'gender_identity': self.gender_identity
+            'requests':[request.to_dict() for request in Requests.query.filter_by(walkee_id=self.id)]
         }
 
     def __repr__(self):
@@ -99,7 +103,7 @@ class Walkee(db.Model):
 class Requests(db.Model):
     __tablename__ = 'requests'
     id = db.Column(db.Integer, primary_key=True)
-    walkee_id = db.Column(db.Integer, db.ForeignKey('walkee.id'), nullable=False)
+    walkee_id = db.Column(db.Integer, db.ForeignKey('walkee.id'))
     protector_id = db.Column(db.Integer, db.ForeignKey('protector.id'))
     date = db.Column(db.String(1000))
     time = db.Column(db.String(1000))
@@ -108,18 +112,22 @@ class Requests(db.Model):
     end_location = db.Column(db.String(1000), nullable=False)
     completed = db.Column(db.Boolean, nullable=False)
     current = db.Column(db.Boolean, nullable=False)
+    active = db.Column(db.Boolean)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    def __init__(self, start_location, end_location, date, time, message, completed, current):
+    def __init__(self, start_location, end_location, date, time, message, completed, current, active, protector_id, walkee_id):
         self.start_location = start_location
         self.end_location = end_location
         self.date = date
         self.time = time
         self.message = message
-        self.completed = False
+        self.completed = completed
         self.current = current
+        self.active = active
+        self.protector_id = protector_id
+        self.walkee_id = walkee_id
 
     def to_dict(self):  # this is how we serialize (similar to_json)
         return {
@@ -130,7 +138,10 @@ class Requests(db.Model):
             'time': self.time,
             'message': self.message,
             'completed': self.completed,
-            'current': self.current
+            'current': self.current,
+            'active': self.active,
+            'protector_id': self.protector_id,
+            'walkee_id': self.walkee_id
         }
 
     def __repr__(self):

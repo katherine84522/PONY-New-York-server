@@ -60,6 +60,7 @@ def pro_login():
 def create_protector():
     data = request.json
     protector = Protector(data['first_name'], data['last_name'], data['email'])
+    # add to above: data['password'], data['picture'],  data['phone_number'], data['gender_identity'], data['address']
     print(data)
     db.session.add(protector)
     db.session.commit()
@@ -73,6 +74,11 @@ def update_protector(id):
     protector.first_name = data['first_name']
     protector.last_name = data['last_name']
     protector.email = data['email']
+    # protector.password = data['password']
+    # protector.picture= data['picture']
+    # protector.phone_number = data['phone_number']
+    # protector.gender_identity = data['gender_identity']
+    # protector.address = data['address']
     db.session.commit()
     return jsonify(protector.to_dict()), 201
 
@@ -105,6 +111,7 @@ def show_walkee(id):
 def create_walkee():
     data = request.json
     walkee = Walkee(data['first_name'], data['last_name'], data['email'])
+    # add to above: data['password'], data['picture'],  data['phone_number'], data['gender_identity']
     print(data)
     db.session.add(walkee)
     db.session.commit()
@@ -134,6 +141,10 @@ def update_walkee(id):
     walkee.first_name = data['first_name']
     walkee.last_name = data['last_name']
     walkee.email = data['email']
+    # walkee.password = data['password']
+    # walkee.picture= data['picture']
+    # walkee.phone_number = data['phone_number']
+    # walkee.gender_identity = data['gender_identity']
     db.session.commit()
     return jsonify(walkee.to_dict()), 201
 
