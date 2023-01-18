@@ -8,12 +8,15 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
+from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__, static_folder='public')
 CORS(app, origins=['*'])
 app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 
 @app.get('/')
@@ -199,6 +202,28 @@ def delete_request(id):
     else:
         return {'error': 'No request found'}, 404
 
+@socketio.on('connect')
+def connected():
+    '''This function is an event listener that gets called when the client connects to the server'''
+    print(f'Client {request.sid} has connected')
+    emit('connect', {'data': f'id: {request.sid} is connected'})
+
+
+@socketio.on('data')
+def handle_message(data):
+    '''This function runs whenever a client sends a socket message to be broadcast'''
+    print(f'Message from Client {request.sid} : ', data)
+    emit('data', {'data': 'data', 'id': request.sid}, broadcast=True)
+
+
+@socketio.on("disconnect")
+def disconnected():
+    '''This function is an event listener that gets called when the client disconnects from the server'''
+    print(f'Client {request.sid} has disconnected')
+    emit('disconnect',
+         f'Client {request.sid} has disconnected', broadcast=True)
+
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=os.environ.get('PORT', 3000))
+    socketio.run(app, host='0.0.0.0', port=os.environ.get('PORT', 3000))
