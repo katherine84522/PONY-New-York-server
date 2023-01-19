@@ -97,8 +97,7 @@ def delete_protector(id):
         print('Deleting protector successfully...')
         return jsonify(protector.to_dict)
     else:
-        return{'error': 'No protector found, soz'}, 404
-        
+        return {'error': 'No protector found, soz'}, 404
 
 
 @app.get('/walkees/<int:id>')
@@ -193,6 +192,7 @@ def get_requests(id):
 def update_requests(id):
     data = request.json
     req = Requests.query.get(id)
+
     # if data['protector_id']:
     #     req.protector_id = data['protector_id']
     for key, value in data.items():
@@ -230,6 +230,7 @@ def delete_request(id):
     else:
         return {'error': 'No request found'}, 404
 
+
 @socketio.on('connect')
 def connected():
     '''This function is an event listener that gets called when the client connects to the server'''
@@ -250,7 +251,6 @@ def disconnected():
     print(f'Client {request.sid} has disconnected')
     emit('disconnect',
          f'Client {request.sid} has disconnected', broadcast=True)
-
 
 
 if __name__ == '__main__':
