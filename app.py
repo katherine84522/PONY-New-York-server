@@ -10,6 +10,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO, emit
+import sys
 
 
 app = Flask(__name__, static_folder='public')
@@ -59,8 +60,8 @@ def pro_login():
 @app.post('/protectors')
 def create_protector():
     data = request.json
-    protector = Protector(data['first_name'], data['last_name'], data['email'])
-    # add to above: data['password'], data['picture'],  data['phone_number'], data['gender_identity'], data['address']
+    protector = Protector(data['first_name'], data['last_name'], data['email'], data['password'], data['picture'],  data['phone_number'], data['gender_identity'], data['address'])
+    # add to above: 
     print(data)
     db.session.add(protector)
     db.session.commit()
@@ -71,9 +72,11 @@ def create_protector():
 def update_protector(id):
     data = request.json
     protector = Protector.query.get(id)
-    protector.first_name = data['first_name']
-    protector.last_name = data['last_name']
-    protector.email = data['email']
+    for key, value in data.items():
+        setattr(protector, key, value)
+    # protector.first_name = data['first_name']
+    # protector.last_name = data['last_name']
+    # protector.email = data['email']
     # protector.password = data['password']
     # protector.picture= data['picture']
     # protector.phone_number = data['phone_number']
@@ -110,8 +113,9 @@ def show_walkee(id):
 @app.post('/walkees')
 def create_walkee():
     data = request.json
-    walkee = Walkee(data['first_name'], data['last_name'], data['email'])
-    # add to above: data['password'], data['picture'],  data['phone_number'], data['gender_identity']
+    walkee = Walkee(data['first_name'], data['last_name'], data['email'], data['password'],
+                    data['picture'],  data['phone_number'], data['gender_identity'])
+    # add to above: 
     print(data)
     db.session.add(walkee)
     db.session.commit()
@@ -137,10 +141,15 @@ def walkee_login():
 @app.patch('/walkees/<int:id>')
 def update_walkee(id):
     data = request.json
+    print(request.values, file=sys.stderr)
     walkee = Walkee.query.get(id)
-    walkee.first_name = data['first_name']
-    walkee.last_name = data['last_name']
-    walkee.email = data['email']
+    for key, value in data.items(): 
+        setattr(walkee, key, value)
+        # walkee[key] = value
+    #walkee.first_name = data['first_name']
+   #walkee.last_name = data['last_name'] if data['last_name'] else None
+    #walkee.email = data['email']
+    
     # walkee.password = data['password']
     # walkee.picture= data['picture']
     # walkee.phone_number = data['phone_number']
@@ -180,23 +189,30 @@ def get_requests(id):
     else:
         return {}, 404
 
-
 @app.patch('/requests/<int:id>')
 def update_requests(id):
     data = request.json
     req = Requests.query.get(id)
-    # request = data['completed']
-    req.completed = data['completed']  # see if boolean is a 1 or a 0
+    # if data['protector_id']:
+    #     req.protector_id = data['protector_id']
+    for key, value in data.items():
+        setattr(req, key, value)
     db.session.add(req)
     db.session.commit()
     return jsonify(req.to_dict()), 201
 
+    # if the request has been started then active becomes true && the protector_id is assigned by the protector who is logged in
+    # if a request has been completed, then the completed needs to be turned true (from the onclick on the front end)
+    # if req.include
+    # request = data['completed']
+    # req.completed = data['completed'] 
+    # req.active = data['active'] # see if boolean is a 1 or a 0
 
 @app.post('/requests')
 def create_requests():
     data = request.json
     reqs = Requests(data['start_location'], data['end_location'], data['date'],
-                    data['time'], data['message'], data['completed'], data['current'], data['active'])
+                    data['time'], data['message'], data['completed'], data['current'], data['active'], data['walkee_id'])
     # print(data)
     db.session.add(reqs)
     db.session.commit()
