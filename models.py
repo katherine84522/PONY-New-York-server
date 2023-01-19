@@ -10,33 +10,36 @@ class Protector(db.Model):
     # this is the migration part
     __tablename__ = 'protectors'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80))  # nullable=False
-    last_name = db.Column(db.String(80))  # nullable=False
-    email = db.Column(db.String(120), unique=True)  # nullable=False
-    # password = db.Column(db.String(120))  # nullable=False
-    # picture = db.Column(db.String, unique=True)  # nullable=False
-    # phone_number = db.Column(db.String, unique=True)  # nullable=False
-    # gender_identity = db.Column(db.String)
-    # address = db.Column(db.String)  # nullable=False
-    # background_check = db.Column(db.Boolean )
-    # active = db.Column(db.Boolean, default=False)
-    # requests = db.relationship('Requests', backref='protector', lazy=True)
-    # created_at = db.Column(db.DateTime, server_default=db.func.now())
-    # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    first_name = db.Column(db.String(80), nullable=False)  # nullable=False
+    last_name = db.Column(db.String(80), nullable=False)  # nullable=False
+    email = db.Column(db.String(120), unique=True,
+                      nullable=False)  # nullable=False
+    password = db.Column(db.String(120), nullable=False)  # nullable=False
+    picture = db.Column(db.String, unique=True,
+                        nullable=False)  # nullable=False
+    phone_number = db.Column(db.String, unique=True,
+                             nullable=False)  # nullable=False
+    gender_identity = db.Column(db.String)
+    address = db.Column(db.String, nullable=False)  # nullable=False
+    background_check = db.Column(db.Boolean) # would need to send this out to a 3rd party
+    active = db.Column(db.Boolean, default=False)
+    requests = db.relationship('Requests', backref='protector', lazy=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     # this is basic python classes
     # Here is where we whitelist what can be set on create by a user client
-    # , password, picture, phone_number, gender_identity, address, active
-    def __init__(self, first_name, last_name, email):
+    # 
+    def __init__(self, first_name, last_name, email, password, picture, phone_number, gender_identity, address):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        # self.password = password
-        # self.picture = picture
-        # self.phone_number = phone_number
-        # self.gender_identity = gender_identity
-        # self.address = address
-        # self.active = active
+        self.password = password
+        self.picture = picture
+        self.phone_number = phone_number
+        self.gender_identity = gender_identity
+        self.address = address
+        self.active = False
         #
 
     def to_dict(self):  # this is how we serialize (similar to_json)
@@ -45,14 +48,12 @@ class Protector(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
-            # 'password': self.password,
-            # 'picture': self.picture,
-            # 'phone_number': self.phone_number,
-            # 'gender_identity': self.gender_identity,
-            # 'address': self.address,
-            # 'active': self.active
-            # 'requests':[request.to_dict() for request in Requests.query.filter_by(protector_id=self.id)]
-
+            'password': self.password,
+            'picture': self.picture,
+            'phone_number': self.phone_number,
+            'gender_identity': self.gender_identity,
+            'address': self.address,
+            'active': self.active
         }
 
     def __repr__(self):
@@ -62,38 +63,39 @@ class Protector(db.Model):
 class Walkee(db.Model):
     __tablename__ = 'walkees'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80))  # nullable=False
-    last_name = db.Column(db.String(80))  # nullable=False
-    email = db.Column(db.String(120), unique=True)  # nullable=False
-    # password = db.Column(db.String(120))  # nullable=False
-    # picture = db.Column(db.String)  # nullable=False
-    # phone_number = db.Column(db.String, unique=True)  # nullable=False
-    # gender_identity = db.Column(db.String)
-    # requests = db.relationship('Requests', backref='walkee', lazy=True)
-    # created_at = db.Column(db.DateTime, server_default=db.func.now())
-    # updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    first_name = db.Column(db.String(80), nullable=False)  # nullable=False
+    last_name = db.Column(db.String(80), nullable=False)  # nullable=False
+    email = db.Column(db.String(120), unique=True,
+                      nullable=False)  # nullable=False
+    password = db.Column(db.String(120), nullable=False)  # nullable=False
+    picture = db.Column(db.String, nullable=False)  # nullable=False
+    phone_number = db.Column(db.String, unique=True,
+                             nullable=False)  # nullable=False
+    gender_identity = db.Column(db.String)
+    requests = db.relationship('Requests', backref='walkee', lazy=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    # , password, picture, phone_number, gender_identity
-    def __init__(self, first_name, last_name, email):
+    # 
+    def __init__(self, first_name, last_name, email, password, picture, phone_number, gender_identity):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        # self.password = password
-        # self.picture = picture
-        # self.phone_number = phone_number
-        # self.gender_identity = gender_identity
+        self.password = password
+        self.picture = picture
+        self.phone_number = phone_number
+        self.gender_identity = gender_identity
 
     def to_dict(self):  # this is how we serialize (similar to_json)
         return {
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            # 'email': self.email,
-            # 'password': self.password,
-            # 'picture': self.picture,
-            # 'phone_number': self.phone_number,
-            # 'gender_identity': self.gender_identity
-            # 'requests':[request.to_dict() for request in Requests.query.filter_by(walkee_id=self.id)]
+            'email': self.email,
+            'password': self.password,
+            'picture': self.picture,
+            'phone_number': self.phone_number,
+            'gender_identity': self.gender_identity
         }
 
     def __repr__(self):
@@ -103,8 +105,8 @@ class Walkee(db.Model):
 class Requests(db.Model):
     __tablename__ = 'requests'
     id = db.Column(db.Integer, primary_key=True)
-    walkee_id = db.Column(db.Integer)  # , db.ForeignKey('walkees.id')
-    protector_id = db.Column(db.Integer)  # , db.ForeignKey('protectors.id')
+    walkee_id = db.Column(db.Integer, db.ForeignKey('walkees.id'), nullable=False)
+    protector_id = db.Column(db.Integer, db.ForeignKey('protectors.id'), nullable=True)
     date = db.Column(db.String(1000))
     time = db.Column(db.String(1000))
     message = db.Column(db.String(1000))
@@ -118,7 +120,7 @@ class Requests(db.Model):
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     # , protector_id, walkee_id
-    def __init__(self, start_location, end_location, date, time, message, completed, current, active):
+    def __init__(self, start_location, end_location, date, time, message, completed, current, active, walkee_id):
         self.start_location = start_location
         self.end_location = end_location
         self.date = date
@@ -127,8 +129,8 @@ class Requests(db.Model):
         self.completed = completed
         self.current = current
         self.active = active
-        # self.protector_id = protector_id
-        # self.walkee_id = walkee_id
+        self.protector_id = None
+        self.walkee_id = walkee_id
 
     def to_dict(self):  # this is how we serialize (similar to_json)
         return {
@@ -140,9 +142,9 @@ class Requests(db.Model):
             'message': self.message,
             'completed': self.completed,
             'current': self.current,
-            'active': self.active
-            # 'protector_id': self.protector_id,
-            # 'walkee_id': self.walkee_id
+            'active': self.active,
+            'walkee_id': self.walkee_id,
+            'protector_id': self.protector_id,
         }
 
     def __repr__(self):
