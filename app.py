@@ -32,6 +32,12 @@ def example():
     return {'message': 'Your app is running python'}
 
 
+@app.get('/protectors')
+def all_protectors():
+    protectors = Protector.query.all()
+    return jsonify([protector.to_dict() for protector in protectors])
+
+
 @app.get('/protectors/<int:id>')
 def show_protector(id):
     protector = Protector.query.get(id)
@@ -99,6 +105,11 @@ def delete_protector(id):
     else:
         return {'error': 'No protector found, soz'}, 404
 
+
+@app.get('/walkees')
+def all_walkees():
+    walkees = Walkee.query.all()
+    return jsonify([walkee.to_dict() for walkee in walkees])
 
 @app.get('/walkees/<int:id>')
 def show_walkee(id):
